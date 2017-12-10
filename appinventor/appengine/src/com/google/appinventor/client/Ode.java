@@ -69,6 +69,7 @@ import com.google.appinventor.shared.rpc.project.FileNode;
 import com.google.appinventor.shared.rpc.project.GalleryAppListResult;
 import com.google.appinventor.shared.rpc.project.GalleryComment;
 import com.google.appinventor.shared.rpc.project.GallerySettings;
+import com.google.appinventor.shared.rpc.project.ProjectNode;
 import com.google.appinventor.shared.rpc.project.ProjectRootNode;
 import com.google.appinventor.shared.rpc.project.ProjectService;
 import com.google.appinventor.shared.rpc.project.ProjectServiceAsync;
@@ -628,6 +629,15 @@ public class Ode implements EntryPoint {
 
   public void openYoungAndroidProjectInDesigner(final Project project) {
     ProjectRootNode projectRootNode = project.getRootNode();
+    Ode.CLog("[project] Id=" + project.getProjectId());
+    Ode.CLog("[project] AttributionId=" + project.getAttributionId());
+    Ode.CLog("[project] Name=" + project.getProjectName());
+    Ode.CLog("[project] ProjectType=" + project.getProjectType());
+    Ode.CLog("[project] DateCreated=" + project.getDateCreated());
+    Ode.CLog("[project] DateModified=" + project.getDateModified());
+    Ode.CLog("[project] isPublished=" + project.isPublished());
+    Ode.CLog("[project] getGalleryId=" + project.getGalleryId());
+    Ode.CLog("[project] getSettings=" + project.getSettings());
     if (projectRootNode == null) {
       // The project nodes haven't been loaded yet.
       // Add a ProjectChangeListener so we'll be notified when they have been loaded.
@@ -641,6 +651,7 @@ public class Ode implements EntryPoint {
       project.loadProjectNodes();
 
     } else {
+      CLogNode(projectRootNode, "-");
       // The project nodes have been loaded. Tell the viewer to open
       // the project. This will cause the projects source files to be fetched
       // asynchronously, and loaded into file editors.
@@ -659,6 +670,17 @@ public class Ode implements EntryPoint {
       assetManager.loadAssets(project.getProjectId());
     }
     getTopToolbar().updateFileMenuButtons(1);
+  }
+
+  private void CLogNode(ProjectNode node, String prefix){
+    if(node==null){
+      Ode.CLog("[projectNode] "+prefix+" null");
+    }else{
+      Ode.CLog("[projectNode] "+prefix+" "+node.getName());
+      for (ProjectNode child : node.getChildren()) {
+        CLogNode(child, prefix+"--");
+      } 
+    }
   }
 
   /**

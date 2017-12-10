@@ -416,6 +416,64 @@ public final class YoungAndroidProjectService extends CommonProjectService {
   }
 
   @Override
+  public void renameProject(String userId, long projectId, String newName) {
+    storageIo.setProjectName(userId, projectId, newName);
+
+    String oldName = storageIo.getProjectName(userId, projectId);
+    String projectSettings = storageIo.loadProjectSettings(userId, projectId);
+    Settings settings = new Settings(JSON_PARSER, projectSettings);
+    String icon = settings.getSetting(
+        SettingsConstants.PROJECT_YOUNG_ANDROID_SETTINGS,
+        SettingsConstants.YOUNG_ANDROID_SETTINGS_ICON);
+    String vcode = settings.getSetting(
+        SettingsConstants.PROJECT_YOUNG_ANDROID_SETTINGS,
+        SettingsConstants.YOUNG_ANDROID_SETTINGS_VERSION_CODE);
+    String vname = settings.getSetting(
+        SettingsConstants.PROJECT_YOUNG_ANDROID_SETTINGS,
+        SettingsConstants.YOUNG_ANDROID_SETTINGS_VERSION_NAME);
+    String useslocation = settings.getSetting(
+        SettingsConstants.PROJECT_YOUNG_ANDROID_SETTINGS,
+        SettingsConstants.YOUNG_ANDROID_SETTINGS_USES_LOCATION);
+    String aname = settings.getSetting(
+        SettingsConstants.PROJECT_YOUNG_ANDROID_SETTINGS,
+        SettingsConstants.YOUNG_ANDROID_SETTINGS_APP_NAME);
+    String sizing = settings.getSetting(
+        SettingsConstants.PROJECT_YOUNG_ANDROID_SETTINGS,
+        SettingsConstants.YOUNG_ANDROID_SETTINGS_SIZING);
+    String showListsAsJson = settings.getSetting(
+        SettingsConstants.PROJECT_YOUNG_ANDROID_SETTINGS,
+        SettingsConstants.YOUNG_ANDROID_SETTINGS_SHOW_LISTS_AS_JSON);
+    String tutorialURL = settings.getSetting(
+        SettingsConstants.PROJECT_YOUNG_ANDROID_SETTINGS,
+        SettingsConstants.YOUNG_ANDROID_SETTINGS_TUTORIAL_URL);
+
+    Project project=storageIo.getUserProject(userId, projectId);
+
+    for (String sourceFileName : storageIo.getProjectSourceFiles(userId, projectId)) {
+      String newSourceFileName;
+
+      String newContents = null;
+      if (sourceFileName.equals(PROJECT_PROPERTIES_FILE_NAME)) {
+        // This is the project properties file. The name of the file doesn't contain the old
+        // project name.
+        newSourceFileName = sourceFileName;
+        // For the contents of the project properties file, generate the file with the new project
+        // name and qualified name.
+        String qualifiedFormName = StringUtils.getQualifiedFormName(
+            storageIo.getUser(userId).getUserEmail(), newName);
+        newContents = getProjectPropertiesFileContents(newName, qualifiedFormName, icon, vcode,
+          vname, useslocation, aname, sizing, showListsAsJson, tutorialURL);
+      } else {
+        // This is some file other than the project properties file.
+        // oldSourceFileName may contain the old project name as a path segment, surrounded by /.
+        // Replace the old name with the new name.
+        newSourceFileName = StringUtils.replaceLastOccurrence(sourceFileName,
+            "/" + oldName + "/", "/" + newName + "/");
+      }
+    }
+  }
+
+  @Override
   public ProjectRootNode getRootNode(String userId, long projectId) {
     // Create root, assets, and source nodes (they are mocked nodes as they don't really
     // have to exist like this on the file system)

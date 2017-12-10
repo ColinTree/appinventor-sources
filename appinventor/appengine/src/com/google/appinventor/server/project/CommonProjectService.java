@@ -76,6 +76,15 @@ public abstract class CommonProjectService {
   }
 
   /**
+   * Rename a project.
+   *
+   * @param userId the user id
+   * @param projectId  project ID as received by
+   * @param newName new projectName
+   */
+  public abstract void renameProject(String userId, long projectId, String newName);
+
+  /**
    * Sets the project's gallery id.
    *
    * @param userId the user id

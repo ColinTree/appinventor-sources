@@ -207,6 +207,17 @@ public class ProjectServiceImpl extends OdeRemoteServiceServlet implements Proje
     getProjectRpcImpl(userId, projectId).deleteProject(userId, projectId);
   }
 
+  /**
+   * Rename a project.
+   * @param projectId  project ID
+   */
+  @Override
+  public UserProject renameProject(long projectId, String newName) {
+    final String userId = userInfoProvider.getUserId();
+    getProjectRpcImpl(userId, projectId).renameProject(userId, projectId, newName);
+    return makeUserProject(userId, projectId);
+  }
+
  /**
    * On publish this sets the project's gallery id
    * @param projectId  project ID

@@ -133,6 +133,15 @@ public class UserProject implements IsSerializable {
   }
 
   /**
+   * Update the project name.
+   *
+   * @param projectName new projectName
+   */
+  public void setProjectName(String projectName) {
+    this.projectName = projectName;
+  }
+
+  /**
    * Returns the project type.
    *
    * @return the projectType

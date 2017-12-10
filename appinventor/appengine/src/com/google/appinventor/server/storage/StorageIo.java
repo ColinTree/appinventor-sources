@@ -261,6 +261,15 @@ public interface StorageIo {
   String getProjectName(String userId, long projectId);
 
   /**
+   * Rename a project.
+   *
+   * @param userId a user Id (the request is made on behalf of this user)
+   * @param projectId  project id
+   * @param newName new project name
+   */
+  void setProjectName(String userId, long projectId, String newName);
+
+  /**
    * Returns the date the project was last modified.
    * @param userId a user Id (the request is made on behalf of this user)
    * @param projectId  project id
